@@ -9,7 +9,7 @@ public class ColorDataConfig : ScriptableObject
     public Material GetMaterialColor(int index) => materials[index];
 }
 
-public enum ColorDataType
+public enum EColorDataType
 {
     None = 0,
     Red = 1,
@@ -20,5 +20,5 @@ public enum ColorDataType
 
 interface IColorData
 {
-    void ChangeMaterialColor(ColorDataType colorDataType, ColorDataConfig colorDataConfig);
+    void ChangeMaterialColor(EColorDataType colorDataType, ColorDataConfig colorDataConfig);
 }

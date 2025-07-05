@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class CreatePlatform : MonoBehaviour
@@ -15,44 +14,34 @@ public class CreatePlatform : MonoBehaviour
 
     [SerializeField] private int numberOfBricks = 4;
 
-    [SerializeField] private List<ColorDataType> colorList = new List<ColorDataType>();
-    
+    [SerializeField] private List<EColorDataType> colorList = new List<EColorDataType>();
+
     private void Start()
     {
         ShuffleColorList();
-        Invoke(nameof(MakeMap), 1);
+        MakeMap();
     }
 
-    private List<ColorDataType> MakeListColorMaterial()
+    private List<EColorDataType> MakeListColorMaterial()
     {
         var totalBrickCount = mapWidth * mapWidth;
         var numberOfBricksPerColor = totalBrickCount / numberOfBricks; // Exclude None
         var currentColorIndex = 1;
-        var colorDataList = new List<ColorDataType>();
+        var colorDataList = new List<EColorDataType>();
 
-        // for (var i = 0; i < totalBrickCount; i++)
-        // {
-        //     if ((i + 1) % numberOfBricksPerColor == 0)
-        //     {
-        //         currentColorIndex++;
-        //     }
-        //
-        //     colorDataList.Add((ColorDataType)currentColorIndex);
-        // }
-        
         for (var i = 0; i < totalBrickCount; i++)
         {
             if (i > 0 && i % numberOfBricksPerColor == 0 && currentColorIndex < numberOfBricks)
             {
                 currentColorIndex++;
             }
-            
-            if (currentColorIndex >= (int)System.Enum.GetValues(typeof(ColorDataType)).Length)
+
+            if (currentColorIndex >= (int)System.Enum.GetValues(typeof(EColorDataType)).Length)
             {
                 Debug.LogError($"Invalid ColorDataType index: {currentColorIndex}");
-                currentColorIndex = 1; 
+                currentColorIndex = 1;
             }
-            colorDataList.Add((ColorDataType)currentColorIndex);
+            colorDataList.Add((EColorDataType)currentColorIndex);
         }
 
         return colorDataList;
@@ -63,7 +52,7 @@ public class CreatePlatform : MonoBehaviour
         //Make map
         for (var i = 0; i < mapWidth; i++)
         {
-            for(var j = 0; j < mapWidth; j++)
+            for (var j = 0; j < mapWidth; j++)
             {
                 var parentTransform = transform.GetChild(0);
                 var spawnPointPos = spawnPoint.position + new Vector3(i * 2, 0, j);
@@ -75,7 +64,7 @@ public class CreatePlatform : MonoBehaviour
             }
         }
     }
-    
+
     private void ShuffleColorList()
     {
         colorList = MakeListColorMaterial();
@@ -84,7 +73,7 @@ public class CreatePlatform : MonoBehaviour
         for (int i = colorList.Count - 1; i >= 0; i--) // Fixed loop range
         {
             int j = UnityEngine.Random.Range(0, i + 1); // Use Unity's Random
-            ColorDataType temp = colorList[i];
+            EColorDataType temp = colorList[i];
             colorList[i] = colorList[j];
             colorList[j] = temp;
         }

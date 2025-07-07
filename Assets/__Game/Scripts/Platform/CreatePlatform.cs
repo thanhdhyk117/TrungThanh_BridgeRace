@@ -49,7 +49,7 @@ public class CreatePlatform : MonoBehaviour
 
     private void MakeMap()
     {
-        //Make map
+        //Instantiate bricks
         for (var i = 0; i < mapWidth; i++)
         {
             for (var j = 0; j < mapWidth; j++)
@@ -70,13 +70,10 @@ public class CreatePlatform : MonoBehaviour
         colorList = MakeListColorMaterial();
         if (colorList.Count <= 1) return;
 
-        for (int i = colorList.Count - 1; i >= 0; i--) // Fixed loop range
+        for (var i = colorList.Count - 1; i >= 0; i--) // Fixed loop range
         {
-            int j = UnityEngine.Random.Range(0, i + 1); // Use Unity's Random
-            EColorDataType temp = colorList[i];
-            colorList[i] = colorList[j];
-            colorList[j] = temp;
+            var j = UnityEngine.Random.Range(0, i + 1); // Use Unity's Random
+            (colorList[i], colorList[j]) = (colorList[j], colorList[i]);
         }
     }
-
 }

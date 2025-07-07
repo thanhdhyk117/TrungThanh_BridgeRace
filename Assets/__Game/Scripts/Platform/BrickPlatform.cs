@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class BrickPlatform : MonoBehaviour, IColorData
 {
     private MeshRenderer _meshRenderer;
-    private EColorDataType currentColorData;
+    private EColorDataType _currentColorData;
+    
+    [SerializeField] private float timeToReset = 2;
 
     private void Start()
     {
@@ -23,12 +26,12 @@ public class BrickPlatform : MonoBehaviour, IColorData
             }
         }
         _meshRenderer.material = colorDataConfig.GetMaterialColor((int)colorDataType);
-        currentColorData = colorDataType; // Lưu màu sắc hiện tại
+        _currentColorData = colorDataType; // Lưu màu sắc hiện tại
     }
 
     private IEnumerator ResetBrick()
     {
-        yield return new WaitForSeconds(2f); // Thời gian chờ trước khi gạch xuất hiện lại
+        yield return new WaitForSeconds(timeToReset); // Thời gian chờ trước khi gạch xuất hiện lại
         _meshRenderer.enabled = true; // Tắt hiển thị gạch
     }
 
@@ -40,11 +43,13 @@ public class BrickPlatform : MonoBehaviour, IColorData
 
     public EColorDataType GetColorDataType()
     {
-        return currentColorData;
+        return _currentColorData;
     }
 
     public bool IsBrickVisible()
     {
         return _meshRenderer.enabled; // Trả về trạng thái hiển thị của gạch
     }
+    
+    
 }

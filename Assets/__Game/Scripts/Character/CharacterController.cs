@@ -16,16 +16,16 @@ public class CharacterController : MonoBehaviour, IColorData
         get => brickCount;
         set
         {
-            int delta = value - brickCount;
-            brickCount = value;
+            brickCount = Mathf.Max(0, value);
 
-            BrickPlayerController(delta);
+            BrickPlayerController();
         }
     }
 
     [SerializeField] private Transform brickPlayerParent;
     [SerializeField] private GameObject brickPrefab;
-    [SerializeField] Queue<GameObject> brickQueue = new Queue<GameObject>();
+    [SerializeField] private List<GameObject> listBricks = new List<GameObject>();
+    [SerializeField] private Vector3 offsetBrickPosition;
 
     private void Start()
     {
@@ -64,91 +64,62 @@ public class CharacterController : MonoBehaviour, IColorData
 
         if (!other.CompareTag(ConstTags.BRICK_PLATFORM) && !other.CompareTag(ConstTags.BRICK_BRIDGE)) return;
 
-        BrickPlatform brickPlatform = other.GetComponent<BrickPlatform>();
-        if (brickPlatform == null)
-        {
-            Debug.LogWarning("BrickPlatform component not found on the collided object.");
-            return;
-        }
-
-        if (brickPlatform.GetColorDataType() != colorDataType || !brickPlatform.IsBrickVisible())
-        {
-            return;
-        }
-
         if (other.CompareTag(ConstTags.BRICK_PLATFORM))
         {
-            BrickCount++;
-            brickPlatform.DisableBrick(); // Ẩn gạch
+            BrickPlatform brickPlatform = other.GetComponent<BrickPlatform>();
+            if (brickPlatform == null)
+            {
+                Debug.LogWarning("BrickPlatform component not found on the collided object.");
+                return;
+            }
+    
+            if (brickPlatform.GetColorDataType() != colorDataType || !brickPlatform.IsBrickVisible())
+            {
+                return;
+            }
+            
+            if (other.CompareTag(ConstTags.BRICK_PLATFORM))
+            {
+                BrickCount++;
+                brickPlatform.DisableBrick(); // Ẩn gạch
+            }
         }
+
         if (other.CompareTag(ConstTags.BRICK_BRIDGE))
         {
-            BrickCount--;
-            Debug.Log($"Brick count decreased: {BrickCount}");
+             BrickCount--;
+             Debug.Log($"Brick count decreased: {BrickCount}");
         }
+       
     }
 
-
-    private void BrickPlayerController(int value)
+    private void ClearBrickList()
     {
-
-
-        if (value > 0)
+        foreach (GameObject brick in listBricks)
         {
-            // Add bricks
-            for (int i = 0; i < value; i++)
+            if (brick != null)
             {
-                GameObject brick;
-
-                // Check for disabled bricks in queue
-                if (brickQueue.Count > 0)
-                {
-                    brick = brickQueue.Dequeue();
-                    if (!brick.activeSelf)
-                    {
-                        brick.SetActive(true);
-                        continue;
-                    }
-                    // If brick is active, put it back and create new one
-                    brickQueue.Enqueue(brick);
-                }
-
-                // Create new brick if none available
-                var brickPos = brickPrefab.transform.position + new Vector3(0, 0.25f, 0) * brickQueue.Count;
-                brick = Instantiate(brickPrefab, brickPos, Quaternion.identity, brickPlayerParent);
-                brick.SetActive(true);
-                brickQueue.Enqueue(brick);
+                Destroy(brick);
             }
         }
-
-        else if (value < 0)
+        listBricks.Clear();
+    }
+    private void BrickPlayerController()
+    {
+        while (listBricks.Count < brickCount)
         {
-            // Remove bricks
-            int bricksToRemove = Mathf.Abs(value);
-            int removedCount = 0;
-
-            // Create temporary queue to preserve active bricks
-            Queue<GameObject> tempQueue = new Queue<GameObject>();
-
-            while (brickQueue.Count > 0 && removedCount < bricksToRemove)
+            var newBrickPlayer = Instantiate(brickPrefab, brickPlayerParent);
+            newBrickPlayer.SetActive(false);
+            listBricks.Add(newBrickPlayer);
+        }
+        
+        for(var i =0; i < listBricks.Count; i++)
+        {
+            listBricks[i].SetActive(i < brickCount);
+            if (i < brickCount)
             {
-                GameObject brick = brickQueue.Dequeue();
-
-                if (brick.activeSelf)
-                {
-                    brick.SetActive(false);
-                    removedCount++;
-                }
-
-                tempQueue.Enqueue(brick);
-            }
-
-            // Restore remaining bricks to queue
-            while (tempQueue.Count > 0)
-            {
-                brickQueue.Enqueue(tempQueue.Dequeue());
+                listBricks[i].transform.position = brickPlayerParent.transform.position + i * offsetBrickPosition;
             }
         }
     }
-
 }

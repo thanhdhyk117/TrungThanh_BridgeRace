@@ -72,12 +72,12 @@ public class CharacterController : MonoBehaviour, IColorData
                 Debug.LogWarning("BrickPlatform component not found on the collided object.");
                 return;
             }
-    
+
             if (brickPlatform.GetColorDataType() != colorDataType || !brickPlatform.IsBrickVisible())
             {
                 return;
             }
-            
+
             if (other.CompareTag(ConstTags.BRICK_PLATFORM))
             {
                 BrickCount++;
@@ -87,10 +87,10 @@ public class CharacterController : MonoBehaviour, IColorData
 
         if (other.CompareTag(ConstTags.BRICK_BRIDGE))
         {
-             BrickCount--;
-             Debug.Log($"Brick count decreased: {BrickCount}");
+            BrickCount--;
+            Debug.Log($"Brick count decreased: {BrickCount}");
         }
-       
+
     }
 
     private void ClearBrickList()
@@ -112,10 +112,11 @@ public class CharacterController : MonoBehaviour, IColorData
             newBrickPlayer.SetActive(false);
             listBricks.Add(newBrickPlayer);
         }
-        
-        for(var i =0; i < listBricks.Count; i++)
+
+        for (var i = 0; i < listBricks.Count; i++)
         {
             listBricks[i].SetActive(i < brickCount);
+            listBricks[i].GetComponent<MeshRenderer>().material = colorDataConfig.GetMaterialColor((int)colorDataType);
             if (i < brickCount)
             {
                 listBricks[i].transform.position = brickPlayerParent.transform.position + i * offsetBrickPosition;

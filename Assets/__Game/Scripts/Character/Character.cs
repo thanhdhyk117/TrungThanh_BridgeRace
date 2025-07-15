@@ -13,7 +13,7 @@ public class Character : ColorObject
     [SerializeField] private Transform playerBrickSpawn;
     [SerializeField] private Vector3 playerBrickSpawnOffset;
     
-    [SerializeField] private Transform playerSkin;
+    [SerializeField] protected Transform playerSkin;
     
     [SerializeField] private Animator animator;
     
@@ -44,6 +44,29 @@ public class Character : ColorObject
             return hit.point + Vector3.up * 1.1f; 
         }
         return Vector3.zero;
+    }
+
+    public bool CanMove(Vector3 nextPosition)
+    {
+        bool isCanMove = true;
+        RaycastHit hit;
+        if (Physics.Raycast(nextPosition, Vector3.down, out hit, 1f, groundLayer))
+        {
+            Stair stair = Cache.GetStair(hit.collider);
+
+            if (stair.colorType != colorType && playerBricks.Count > 0)
+            {
+                stair.ChangeColor(colorType);
+                RemoveBrick();
+                stage.NewBrick(colorType);
+            } 
+            
+            if (stair.colorType != colorType && playerBricks.Count == 0)
+            {
+               isCanMove = false;
+            }
+        }
+        return isCanMove;
     }
     
     private void AddBrick()

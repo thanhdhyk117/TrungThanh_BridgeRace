@@ -5,72 +5,36 @@ public class CreatePlatform : MonoBehaviour
 {
 
     [SerializeField] private Transform spawnPoint;
-
-    [SerializeField] private ColorDataConfig colorDataConfig;
+    [SerializeField] private Transform spawnPointParent;
 
     [SerializeField] private int mapWidth = 10;
+    [SerializeField] private int mapHeight = 10;
 
-    [SerializeField] private int numberOfBricks = 4;
-
-    [SerializeField] private List<EColorDataType> colorList = new List<EColorDataType>();
-
-    private void Start()
+    
+    [ContextMenu("Make Map")]
+    private void MakeMap()
     {
-        ShuffleColorList();
-    }
-
-    private List<EColorDataType> MakeListColorMaterial()
-    {
-        var totalBrickCount = mapWidth * mapWidth;
-        var numberOfBricksPerColor = totalBrickCount / numberOfBricks; // Exclude None
-        var currentColorIndex = 1;
-        var colorDataList = new List<EColorDataType>();
-
-        for (var i = 0; i < totalBrickCount; i++)
+        for (var i = 0; i < mapWidth; i++)
         {
-            if (i > 0 && i % numberOfBricksPerColor == 0 && currentColorIndex < numberOfBricks)
+            for (var j = 0; j < mapHeight; j++)
             {
-                currentColorIndex++;
+                var x = spawnPoint.localScale.x;
+                var z = spawnPoint.localScale.z;
+                Vector3 spawnPosition = spawnPoint.position + new Vector3(i * x * 1.5f, 0, j * z * 2f);
+                Transform newObj = Instantiate(spawnPoint, spawnPointParent);
+                
+                newObj.localPosition = spawnPosition;
+                
             }
-
-            if (currentColorIndex >= (int)System.Enum.GetValues(typeof(EColorDataType)).Length)
-            {
-                Debug.LogError($"Invalid ColorDataType index: {currentColorIndex}");
-                currentColorIndex = 1;
-            }
-            colorDataList.Add((EColorDataType)currentColorIndex);
         }
-
-        return colorDataList;
     }
 
-    // private void MakeMap()
-    // {
-    //     //Instantiate bricks
-    //     for (var i = 0; i < mapWidth; i++)
-    //     {
-    //         for (var j = 0; j < mapWidth; j++)
-    //         {
-    //             var parentTransform = transform.GetChild(0);
-    //             var spawnPointPos = spawnPoint.position + new Vector3(i * 2, 0, j);
-    //             var brick = Instantiate(bridgePrefab, spawnPointPos, Quaternion.identity);
-    //             brick.transform.SetParent(parentTransform);
-    //             brick.gameObject.SetActive(true);
-    //             brick.ChangeMaterialColor(colorList[i * mapWidth + j], colorDataConfig);
-    //             bricks.Add(brick);
-    //         }
-    //     }
-    // }
-
-    private void ShuffleColorList()
+    [ContextMenu("Destroy Map")]
+    private void DestroyMap()
     {
-        colorList = MakeListColorMaterial();
-        if (colorList.Count <= 1) return;
-
-        for (var i = colorList.Count - 1; i >= 0; i--) // Fixed loop range
+        for (int i = 0; i < spawnPointParent.childCount; i++)
         {
-            var j = UnityEngine.Random.Range(0, i + 1); // Use Unity's Random
-            (colorList[i], colorList[j]) = (colorList[j], colorList[i]);
+            Destroy(spawnPointParent.GetChild(i).gameObject);
         }
     }
 }

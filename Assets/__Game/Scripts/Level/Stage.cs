@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Stage : MonoBehaviour
-{
+{ 
+   [SerializeField] private Transform brickPointParent;
    public Transform[] brickPoints;
    public List<Vector3> emptyPoint = new List<Vector3>();
    public List<Brick> bricks = new List<Brick>();
@@ -45,5 +46,14 @@ public class Stage : MonoBehaviour
    {
       emptyPoint.Add(brick.TF.position);
       bricks.Remove(brick);
+   }
+
+   [ContextMenu("Test")]
+   private void LoadPoint()
+   {
+      if (brickPoints.Length == 0)
+      {
+         brickPoints = brickPointParent.GetComponentsInChildren<Transform>();
+      }
    }
 }

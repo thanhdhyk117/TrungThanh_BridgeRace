@@ -6,6 +6,8 @@ public class Level : MonoBehaviour
 {
     public Transform startPoint;
     public Transform endPoint;
+
+    public int botAmount;
     
     public Stage[] stages;
 

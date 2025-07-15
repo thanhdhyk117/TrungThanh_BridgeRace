@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7382772380509455433}
   - component: {fileID: 8915133918973314375}
   - component: {fileID: 8952973133425388803}
+  - component: {fileID: -5339013838019341203}
   m_Layer: 6
   m_Name: Stair
   m_TagString: Untagged
@@ -105,3 +106,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-5339013838019341203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9051809131156505991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88fbe4408dee48c479af9cf468860c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolType: 0
+  colorType: 0
+  colorData: {fileID: 11400000, guid: 89547dc957c7ae84a8686c0e24d83dea, type: 2}
+  renderer: {fileID: 8915133918973314375}

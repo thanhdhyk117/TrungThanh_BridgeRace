@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PatrolState : IState<Bot>
 {
@@ -8,7 +6,7 @@ public class PatrolState : IState<Bot>
     public void OnEnter(Bot t)
     {
         t.ChangeAnimation(Consts.ANIM_RUN);
-        targetBrick = Random.Range(2, 7);
+        targetBrick = 5;
         SeekTarget(t);
     }
 
@@ -24,6 +22,10 @@ public class PatrolState : IState<Bot>
             {
                 SeekTarget(t);
             }
+        }
+        else
+        {
+            Debug.Log($"Bot {t.name} is moving to destination: {t.agent.destination}");
         }
     }
 

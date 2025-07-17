@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,7 +8,7 @@ public class Bot : Character
     private Vector3 destionation;
 
     public bool IsDestination => Vector3.Distance(destionation, Vector3.right * TF.position.x + Vector3.forward * TF.position.z) < 0.1f;
-    
+
     public override void OnInit()
     {
         base.OnInit();
@@ -22,7 +19,7 @@ public class Bot : Character
     {
         agent.enabled = true;
         destionation = position;
-        destionation.y = 0;
+        destionation.y = 0f;
         agent.SetDestination(position);
     }
 
@@ -30,7 +27,7 @@ public class Bot : Character
 
     private void Update()
     {
-        // if (GameManager.Instance.IsState(GameState.Gameplay) && currentState != null)
+        if (GameManager.Ins.IsState(EGameState.GamePlay) && currentState != null)
         {
             currentState.OnExcute(this);
             //check stair
@@ -56,6 +53,11 @@ public class Bot : Character
     internal void MoveStop()
     {
         agent.enabled = false;
+    }
+
+    private void Movement()
+    {
+
     }
 }
 

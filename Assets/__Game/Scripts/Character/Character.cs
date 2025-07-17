@@ -1,32 +1,31 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Character : ColorObject
 {
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask stairLayer;
-    
+
     private List<PlayerBrick> playerBricks = new List<PlayerBrick>();
-    
+
     [SerializeField] private PlayerBrick playerBrickPrefab;
     [SerializeField] private Transform playerBrickSpawn;
     [SerializeField] private Vector3 playerBrickSpawnOffset;
-    
+
     [SerializeField] protected Transform playerSkin;
-    
+
     [SerializeField] private Animator animator;
-    
+
     private string currentAnimation;
-    
+
     public Stage stage;
-    
+
     public int BrickCount => playerBricks.Count;
 
     public override void OnInit()
     {
         ClearBrick();
-        ChangeAnimation("Idle");
+        ChangeAnimation(Consts.ANIM_IDLE);
     }
 
     #region BrickPlayer
@@ -75,7 +74,7 @@ public class Character : ColorObject
 
         return isCanMove;
     }
-    
+
     private void AddBrick()
     {
         PlayerBrick playerBrick = Instantiate(playerBrickPrefab, playerBrickSpawn);
@@ -120,7 +119,7 @@ public class Character : ColorObject
 
     #endregion
 
-    
+
     /// <summary>
     /// chuyen anim
     /// </summary>

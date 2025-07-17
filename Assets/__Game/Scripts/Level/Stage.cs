@@ -47,6 +47,22 @@ public class Stage : MonoBehaviour
       emptyPoint.Add(brick.TF.position);
       bricks.Remove(brick);
    }
+   
+   internal Brick SeekBrickPoint(EColorDataType colorType)
+   {
+      Brick brick = null;
+
+      for (int i = 0; i < bricks.Count; i++)
+      {
+         if (bricks[i].colorType == colorType)
+         {
+            brick = bricks[i];
+            break;
+         }
+      }
+
+      return brick;
+   }
 
    [ContextMenu("Test")]
    private void LoadPoint()

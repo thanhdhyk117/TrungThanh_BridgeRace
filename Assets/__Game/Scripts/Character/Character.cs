@@ -36,21 +36,27 @@ public class Character : ColorObject
     /// 
     /// </summary>
 
-    public Vector3 CheckGround(Vector3 nextPosition)
+    public Vector3 CheckGround(Vector3 nextPoint)
     {
         RaycastHit hit;
-        if (Physics.Raycast(nextPosition, Vector3.down, out hit, 1f, groundLayer))
-        {
-            return hit.point + Vector3.up * 1.1f; 
-        }
-        return Vector3.zero;
-    }
 
-    public bool CanMove(Vector3 nextPosition)
+        if (Physics.Raycast(nextPoint, Vector3.down, out hit, 2f, groundLayer))
+        {
+            return hit.point + Vector3.up * 1.4f;
+        }
+
+        return TF.position;
+    }
+    public bool CanMove(Vector3 nextPoint)
     {
+        //check mau stair
+        //k cung mau -> fill
+        //het gach + k cung mau + huong di len
+
         bool isCanMove = true;
         RaycastHit hit;
-        if (Physics.Raycast(nextPosition, Vector3.down, out hit, 1f, groundLayer))
+
+        if (Physics.Raycast(nextPoint, Vector3.down, out hit, 2f, stairLayer))
         {
             Stair stair = Cache.GetStair(hit.collider);
 
@@ -59,13 +65,14 @@ public class Character : ColorObject
                 stair.ChangeColor(colorType);
                 RemoveBrick();
                 stage.NewBrick(colorType);
-            } 
-            
-            if (stair.colorType != colorType && playerBricks.Count == 0)
+            }
+
+            if (stair.colorType != colorType && playerBricks.Count == 0 && playerSkin.forward.z > 0)
             {
-               isCanMove = false;
+                isCanMove = false;
             }
         }
+
         return isCanMove;
     }
     

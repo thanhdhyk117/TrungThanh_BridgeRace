@@ -14,6 +14,7 @@ public class StartStageArea : MonoBehaviour
 
         if (character != null && !colorTypeList.Contains(character.colorType))
         {
+            character.ChangeColor(character.colorType);
             colorTypeList.Add(character.colorType);
             character.stage = stage;
             stage.InitColor(character.colorType);

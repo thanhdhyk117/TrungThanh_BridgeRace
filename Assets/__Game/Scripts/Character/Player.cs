@@ -6,13 +6,6 @@ using UnityEngine;
 public class Player : Character
 {
     [SerializeField] private float speed;
-    // [SerializeField] private VariableJoystick joystick;
-
-    // private void Start()
-    // {
-    //     joystick.SetMode(JoystickType.Dynamic);
-    //     joystick.AxisOptions = AxisOptions.Both;
-    // }
 
     private void Update()
     {
@@ -21,27 +14,30 @@ public class Player : Character
 
     private void Movement()
     {
-        if (Input.GetMouseButton(0))
+        if (GameManager.Ins.IsState(EGameState.GamePlay))
         {
-
-            Vector3 nextPoint = JoystickControl.direct * speed * Time.deltaTime + TF.position;
-
-            if (CanMove(nextPoint))
+            if (Input.GetMouseButton(0))
             {
-                TF.position = CheckGround(nextPoint);
+
+                Vector3 nextPoint = JoystickControl.direct * speed * Time.deltaTime + TF.position;
+
+                if (CanMove(nextPoint))
+                {
+                    TF.position = CheckGround(nextPoint);
+                }
+
+                if (JoystickControl.direct != Vector3.zero)
+                {
+                    playerSkin.forward = JoystickControl.direct;
+                }
+
+                ChangeAnimation(Consts.ANIM_RUN);
             }
 
-            if (JoystickControl.direct != Vector3.zero)
+            if (Input.GetMouseButtonUp(0))
             {
-                playerSkin.forward = JoystickControl.direct;
+                ChangeAnimation(Consts.ANIM_IDLE);
             }
-
-            ChangeAnimation(Consts.ANIM_RUN);
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-            ChangeAnimation(Consts.ANIM_IDLE);
         }
     }
 }

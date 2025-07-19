@@ -10,7 +10,7 @@ public class Stage : MonoBehaviour
     [SerializeField] private Brick brickPrefab;
 
     [SerializeField] private int characterAmount = 4;
-
+    
     public void OnInit()
     {
         for (var i = 0; i < brickPoints.Length; i++)

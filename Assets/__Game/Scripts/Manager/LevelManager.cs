@@ -1,47 +1,37 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LevelManager : Singleton<LevelManager>
 {
-    [SerializeField] private Level level;
-
-    private Level currentLevel => level;
-
-    public Vector3 FinishPoint => currentLevel.finishPoint.position;
-
+    [SerializeField] private Level[] levels;
+    private Level _currentLevel;
+    private int _currentLevelIndex;
     public List<Bot> bots = new List<Bot>();
 
     [SerializeField] private Player player;
     [SerializeField] private Vector3[] startPoints;
     [SerializeField] private EColorDataType[] colorDatas;
-
+    [SerializeField] private Vector3 playerStartPoint;
+    public Vector3 FinishPoint => _currentLevel.finishPoint.position;
     public int CharacterAmount => startPoints.Length;
 
-    [SerializeField] private Button startButton;
+    private void Awake()
+    {
+        _currentLevelIndex = PlayerPrefs.GetInt("Level", 0);
+    }
 
     private void Start()
     {
+        LoadLevel(_currentLevelIndex);
         OnInit();
-
-        if (startButton != null)
-        {
-            startButton.onClick.AddListener(OnStartgame);
-        }
-        else
-        {
-            Debug.LogWarning("Start button not assigned in LevelManager!");
-        }
+        UIManager.Ins.OpenUI<MianMenu>();
     }
 
     private void OnInit()
     {
-        if (player == null)
-        {
-            Debug.LogError("Player not assigned in LevelManager!");
-            return;
-        }
-
+        
         player.OnInit();
         for (int i = 0; i < CharacterAmount; i++)
         {
@@ -51,36 +41,65 @@ public class LevelManager : Singleton<LevelManager>
             bot.OnInit();
             bots.Add(bot);
         }
+        player.TF.position = playerStartPoint;
     }
-
+    
     public void OnStartgame()
     {
-        if (level == null)
-        {
-            Debug.LogError("Level not initialized in LevelManager!");
-            return;
-        }
         GameManager.Ins.ChangeState(EGameState.GamePlay);
-        level.OnInit();
-        for (int i = 0; i < bots.Count; i++)
+        _currentLevel?.OnInit();
+        for (var i = 0; i < bots.Count; i++)
         {
-            //bots[i].ChangeAnimation(Consts.ANIM_RUN);
-            //bots[i].SetDestination(level.endPoint.position);
             bots[i].ChangeState(new PatrolState());
         }
     }
 
-
-
-    [ContextMenu("Load Component")]
-    public void LoadComponent()
+    public void OnFinshgame()
     {
-        level = FindObjectOfType<Level>();
-        player = FindObjectOfType<Player>();
-        if (level == null)
+        foreach (var bot in bots)
         {
-            Debug.LogError("Level not found in the scene!");
-            return;
+            bot.ChangeState(null);
+            bot.MoveStop();
+        }
+        
+    }
+    public void OnReset()
+    {
+        SimplePool.CollectAll();
+        bots.Clear();
+    }
+
+    internal void OnRetry()
+    {
+        OnReset();
+        LoadLevel(_currentLevelIndex);
+        OnInit();
+        UIManager.Ins.OpenUI<MianMenu>();
+    }
+
+    internal void OnNextLevel()
+    {
+        _currentLevelIndex++;
+        PlayerPrefs.SetInt("Level", _currentLevelIndex);
+        OnReset();
+        LoadLevel(_currentLevelIndex);
+        OnInit();
+        UIManager.Ins.OpenUI<MianMenu>();
+    }
+
+    public void LoadLevel(int index)
+    {
+        if (_currentLevel != null)
+        {
+            Destroy(_currentLevel.gameObject);
+        }
+
+        if (index < levels.Length)
+        {
+            _currentLevelIndex = index;
+            _currentLevel = Instantiate(levels[_currentLevelIndex]);
+            _currentLevel.OnInit();
         }
     }
+    
 }
